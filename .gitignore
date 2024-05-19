@@ -145,4 +145,4 @@ Temporary Items
 .apdisk
 
 # Streamlit specific
-.streamlit/
+secrets.toml
