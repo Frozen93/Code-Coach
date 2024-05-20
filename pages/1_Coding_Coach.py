@@ -4,6 +4,7 @@ import io
 from code_editor import code_editor
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
+from prompts import prompts, tutorials
 
 # Setup LLM and API key
 openai_api_key = st.secrets["openai_key"]
@@ -34,6 +35,12 @@ def main():
         st.session_state["skill_level"] = 0
     # Generate exercise based on user input
     if topic and language:
+        if topic == "Variablen & Operatoren":
+            with st.sidebar.popover(f"Tutorial {topic}"):
+                st.markdown(tutorials["variablen_operatoren"])
+        if topic == "if/else":
+            with st.sidebar.popover(f"Tutorial {topic}"):
+                st.markdown(tutorials["if_else"])
         generate_exercise(topic, language)
         user_code = display_code_editor()
 
@@ -54,64 +61,7 @@ def show_skill_level():
 
 def update_skill_level(user_code):
     st.session_state["skill_level"] += evaluate_correctnes(user_code)
-
-def generate_tutorial(topic, language):
-    prompt = f"""Generate a python tutorial about the topic: {topic}, using only the language {language}.
-              The target group are school students between 12-18 years who are new to python.
-              Example:
-              Lesson
-    Open Lesson in New Tab
-    Close
-    Introduction
-    Welcome to our first lesson of the Python introductory course! Today, we will uncover the simplicity and power of Python, a universally esteemed programming language renowned for its expressiveness and readability. We'll learn and practice in the CodeSignal environment, where the Python libraries are pre-installed. By the end of this lesson, you'll grasp the foundational aspects of Python and be able to execute your very first Python code. Intriguing, isn't it?
-    Understanding Python Syntax
-    Every language, whether it's English, Spanish, or Python, operates under a unique syntax. This cohesive framework consists of rules and principles that delineate what is grammatically correct. Similarly, Python's syntax describes how Python programs should be composed and structured.
-    Let's start with something simple! Statements are instructions that a Python interpreter can execute. For example:
-    Python
-    Copy
-    1print("Hello, and welcome to the Python World!")
-    In this statement, print() is a function that Python provides to print the provided input to the console, and "Hello, and welcome to the Python World!" is a string that is printed on the console.
-    Explaining Comments in Python
-    Coding is a form of art, and akin to every artist, coders leave reflections and significant explanations in their code in the form of comments. Comments are annotations or explanations providing additional insights about the code. They make your code more informative and demonstrative to others (or even to your future self). Comments do not affect your code execution or its outcome in any way but are helpful to better understand what's happening in the code.
-    Python features two types of comments: single-line and multi-line. Here is what they look like:
-    Python
-    Copy
-    1# This is a single-line comment in Python.
-    2
-    3'''
-    4This is a 
-    5multi-line comment in Python.
-    6'''
-    7\"""
-    8This is another
-    9multi-line comment in Python.
-    10\"""
-    In this Python code snippet, you see a single-line comment initiated with #, and a block of lines enclosed within triple quotes (single or double), forming a multi-line comment.
-    Introducing Indentation in Python
-    Python uniquely approaches code organization by using indentation rather than braces or keywords to determine blocks of code. This method enhances Python's readability and enforces a uniform coding style. Here's an example (you don't have to understand the meaning of the if block for now, we'll cover it in the next lessons):
-    Python
-    1if 5 > 2:
-    2    print("Five is indeed greater than two!") # this belongs to the if block
-    3print("End of program") # this does not belong to the if block
-    In this code snippet, due to the indentation, the first print statement belongs to the if block, while the second print statement, which is not indented, falls outside the if block.
-    Getting Familiar with Simple Print Statements
-    The print() function in Python greatly resembles its real-world counterpart; it assists us in displaying data on the console. Whether it is strings, numbers, the result of an operation, or even a complex structure, if it can be represented as a string, Python can print it! Here are some examples:
-    Python
-    1print("Hello, world!") # prints a constant string
-    2print(5) # prints a constant number
-    3x = 10   # defines a variable
-    4print(x) # prints a variable
-    5print(3 * 7) # prints the result of an expression - 21
-    6
-    7# The next line prints: "Cosmo can make you 10 times more effective!"
-    8print("Cosmo can make you", x, "times more effective!") # Combine the text and a variable
-    In all these examples, print() accepts an argument and prints it to the console accordingly.
-    Lesson Summary
-    Congratulations on completing your first Python lesson! You've grasped Python's unique, beginner-friendly syntax and noted the importance of commenting for code clarity. You've learned the crucial role of indentation in Python and have observed the print() function in action. Now, prepare for engaging coding exercises to apply and consolidate these foundations. It's time to dive deeper into the thrilling journey of Python programming!
-                """
-    tutorial = llm.stream([HumanMessage(content=prompt)])     
-    st.sidebar.write_stream(tutorial)     
-    
+      
 # Generate exercise using LLM
 def generate_exercise(topic, language):
     prompt = (
@@ -144,8 +94,8 @@ def display_code_editor():
         height=[10, 20],
         buttons=[
             {
-                "name": "Run",
-                "feather": "Play",
+                "name": "Send",
+                "feather": "Send",
                 "primary": True,
                 "hasText": True,
                 "showWithIcon": True,
