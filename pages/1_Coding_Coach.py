@@ -45,7 +45,7 @@ def main():
         user_code = display_code_editor()
 
         # Show output if available
-        if "letzter_output" in st.session_state:
+        if "letzter_output" in st.session_state and st.session_state["letzter_output"]:
             st.write("**Ausgabe:**")
             st.code(st.session_state["letzter_output"])
 
@@ -55,7 +55,7 @@ def main():
             ask_ai_question(question, user_code, language)
         st.divider()
         # Button to execute user code
-        if st.button("Code ausführen + Feedback erhalten"):
+        if st.button("Lösung einreichen + Feedback erhalten"):
             evaluate_correctnes(user_code)
             run_and_display_code(user_code, language)
             
@@ -121,8 +121,11 @@ def display_code_editor():
     )
     user_code = response_dict["text"]
 
-    # Save output in session state if "Ausführen" pressed
-    if response_dict.get("button") == "Ausführen":
+    # Remove debug output
+    # st.write("[DEBUG] code_editor response:", response_dict)
+
+    # Fix: Check for 'type' == 'submit' instead of 'button'
+    if response_dict.get("type") == "submit":
         st.session_state["letzter_output"] = execute_code(user_code)
     return user_code
 
