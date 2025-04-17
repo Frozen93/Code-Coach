@@ -44,6 +44,11 @@ def main():
         generate_exercise(topic, language)
         user_code = display_code_editor()
 
+        # Show output if available
+        if "letzter_output" in st.session_state:
+            st.write("**Ausgabe:**")
+            st.code(st.session_state["letzter_output"])
+
         # User input for question
         question = st.text_input("Stelle eine Frage")
         if st.button("Frage absenden"):
@@ -116,12 +121,9 @@ def display_code_editor():
     )
     user_code = response_dict["text"]
 
-    # Prüfen, ob der "Ausführen"-Button gedrückt wurde
+    # Save output in session state if "Ausführen" pressed
     if response_dict.get("button") == "Ausführen":
-        st.write("**Ausgabe:**")
-        result = execute_code(user_code)
-        st.code(result)
-
+        st.session_state["letzter_output"] = execute_code(user_code)
     return user_code
 
 # Ask AI a question about the current task
