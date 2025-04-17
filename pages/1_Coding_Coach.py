@@ -111,15 +111,16 @@ def display_code_editor():
             }
         ],
         allow_reset=True,
-        options={"showLineNumbers":"True"},
+        options={"showLineNumbers": "True"},
         key="e1"
     )
     user_code = response_dict["text"]
 
-    # Wenn "Ausführen" gedrückt wurde, führe nur den Code aus und zeige die Ausgabe
+    # Prüfen, ob der "Ausführen"-Button gedrückt wurde
     if response_dict.get("button") == "Ausführen":
         st.write("**Ausgabe:**")
-        run_and_display_code(user_code, st.session_state.get("language", "Deutsch"))
+        result = execute_code(user_code)
+        st.code(result)
 
     return user_code
 
