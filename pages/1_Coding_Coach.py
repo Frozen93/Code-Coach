@@ -94,8 +94,8 @@ def display_code_editor():
         height=[10, 20],
         buttons=[
             {
-                "name": "Send",
-                "feather": "Send",
+                "name": "Ausführen",
+                "feather": "Play",
                 "primary": True,
                 "hasText": True,
                 "showWithIcon": True,
@@ -114,7 +114,14 @@ def display_code_editor():
         options={"showLineNumbers":"True"},
         key="e1"
     )
-    return response_dict["text"]
+    user_code = response_dict["text"]
+
+    # Wenn "Ausführen" gedrückt wurde, führe nur den Code aus und zeige die Ausgabe
+    if response_dict.get("button") == "Ausführen":
+        st.write("**Ausgabe:**")
+        run_and_display_code(user_code, st.session_state.get("language", "Deutsch"))
+
+    return user_code
 
 # Ask AI a question about the current task
 def ask_ai_question(question, user_code, language):
